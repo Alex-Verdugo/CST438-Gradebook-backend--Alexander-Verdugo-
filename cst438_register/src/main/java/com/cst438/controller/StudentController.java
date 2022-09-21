@@ -1,5 +1,7 @@
 package com.cst438.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,20 +42,20 @@ public class StudentController {
 	}
 	
 	@PostMapping("/student/hold")
-	public Student updateHold(@RequestParam("email")String email, @RequestParam("addhold")boolean addhold){
-		Student s = studentRepository.findByEmail(email);
-		if(s!=null) {//student exists in database
+	public Optional<Student> updateHold(@RequestParam("id")int id, @RequestParam("addhold")boolean addhold){
+		Optional<Student> s = studentRepository.findById(id);
+		if(s.isPresent()) {//student exists in database
 			if(addhold) {
-				s.setStatusCode(1);
-				s.setStatus("Hold");
-				studentRepository.save(s);
+				s.get().setStatusCode(1);
+				s.get().setStatus("Hold");
+				studentRepository.save(s.get());
 			} else {
-				s.setStatusCode(0);
-				s.setStatus("No Holds");
-				studentRepository.save(s);
+				s.get().setStatusCode(0);
+				s.get().setStatus("No Holds");
+				studentRepository.save(s.get());
 			}
 		}else {
-			System.out.println("student not found: "+email);
+			System.out.println("student not found: "+id);
 			throw  new ResponseStatusException( HttpStatus.BAD_REQUEST, "Student not found" );
 		}
 		return s;
