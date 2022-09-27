@@ -247,6 +247,7 @@ public class GradeBookController {
 	@PostMapping("/assignment/createAssignment")
 	@Transactional
 	public  AssignmentDTO createAssignment(@RequestParam("AssignmentName") String AssignmentName,@RequestParam("AssignmentDueDate") Date DueDate,@RequestParam("CourseId") int courseId) {
+		
 		//Create new assignment object
 		Assignment assignment = new Assignment();
 
@@ -254,8 +255,7 @@ public class GradeBookController {
 		assignment.setName(AssignmentName);
 		assignment.setDueDate(DueDate);
 		
-		
-		
+		//getting course by course ID from course repo
 		assignment.setCourse(courseRepository.findById(courseId).get());
 		
 		assignmentRepository.save(assignment);
@@ -264,12 +264,14 @@ public class GradeBookController {
 		AssignmentDTO dto = new AssignmentDTO();
 		dto.assignmentId = assignment.getId();
 		dto.assignmentName = assignment.getName();
+		//changing type date to string 
 		String pattern = "MM/dd/yyyy";
 		DateFormat df = new SimpleDateFormat(pattern);
 		dto.dueDate = df.format(assignment.getDueDate());
 		dto.courseTitle = assignment.getCourse().getTitle();
 		dto.courseId = assignment.getCourse().getCourse_id();
 		
+		//returning DTO avoids returning data from assignment entity's relationships
 		return dto;
 		
 	}
