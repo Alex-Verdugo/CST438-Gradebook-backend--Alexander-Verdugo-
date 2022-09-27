@@ -234,11 +234,6 @@ public class GradeBookController {
 	@PostMapping("/assignment")
 	@Transactional
 	private  Assignment createAssignment(@RequestParam("AssignmentName") String AssignmentName,@RequestParam("AssignmentDueDate") Date DueDate ) {
- 
-		
-		String email = "dwisneski@csumb.edu"; //email
-		
-		if(email == "dwisneski@csumb.edu") {
 		
 		//Create new assignment object
 		Assignment assignment = new Assignment();
@@ -248,10 +243,7 @@ public class GradeBookController {
 		assignment.setDueDate(DueDate);
 		assignmentRepository.save(assignment);
 		return assignment; 
-		}
-		else {
-			throw new ResponseStatusException( HttpStatus.UNAUTHORIZED, "Not Authorized. " );
-		}
+		
 	}
 	
 	
