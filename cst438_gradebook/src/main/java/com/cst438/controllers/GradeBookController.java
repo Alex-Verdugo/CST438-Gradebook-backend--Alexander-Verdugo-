@@ -191,7 +191,7 @@ public class GradeBookController {
 	
 
 	// Change the name of an assignment for a course
-	@PutMapping("/assignment/{assignmentId}")
+	@PutMapping("/assignment/updateName")
 	@Transactional
 	public Assignment changeAssignmentName(@RequestParam("AssignmentId") int assignmentId, @RequestParam String AssignmentName) {
 		
@@ -212,7 +212,7 @@ public class GradeBookController {
 	}
 	
 	//Delete an assignment for a course  checks if assignment has a grade
-	@DeleteMapping("/assignment/{assignmentId}")
+	@DeleteMapping("/assignment/delete")
 	@Transactional
 	public void deleteAssignment(@RequestParam("AssignmentId") int assignmentId) {
 		
