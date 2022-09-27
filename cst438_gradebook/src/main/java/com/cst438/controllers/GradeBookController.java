@@ -1,6 +1,8 @@
 package com.cst438.controllers;
 
 import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.cst438.domain.Assignment;
+import com.cst438.domain.AssignmentDTO;
 import com.cst438.domain.AssignmentListDTO;
 import com.cst438.domain.AssignmentGrade;
 import com.cst438.domain.AssignmentGradeRepository;
@@ -193,7 +196,7 @@ public class GradeBookController {
 	// Change the name of an assignment for a course
 	@PutMapping("/assignment/updateName")
 	@Transactional
-	public Assignment changeAssignmentName(@RequestParam("AssignmentId") int assignmentId, @RequestParam String AssignmentName) {
+	public AssignmentDTO changeAssignmentName(@RequestParam("AssignmentId") int assignmentId, @RequestParam ("AssignmentName") String AssignmentName) {
 		
 		String email = "dwisneski@csumb.edu";
 		
@@ -206,8 +209,18 @@ public class GradeBookController {
 		else {
 		//Change assignment name 
 		assignment.setName(AssignmentName);
-		assignmentRepository.save(assignment);
-		return assignment;
+		assignmentRepository.save(assignment); 
+		
+		//copying info into assignmnetDTO
+		AssignmentDTO dto = new AssignmentDTO();
+		dto.assignmentId = assignment.getId();
+		dto.assignmentName = assignment.getName();
+		String pattern = "MM/dd/yyyy";
+		DateFormat df = new SimpleDateFormat(pattern);
+		dto.dueDate = df.format(assignment.getDueDate());
+		dto.courseTitle = assignment.getCourse().getTitle();
+		dto.courseId = assignment.getCourse().getCourse_id();
+		return dto;
 		}
 	}
 	
@@ -231,18 +244,33 @@ public class GradeBookController {
 	
 	
 	// Add a new assignment for the course. The assignment has a name and a due date.
-	@PostMapping("/assignment")
+	@PostMapping("/assignment/createAssignment")
 	@Transactional
-	private  Assignment createAssignment(@RequestParam("AssignmentName") String AssignmentName,@RequestParam("AssignmentDueDate") Date DueDate ) {
-		
+	public  AssignmentDTO createAssignment(@RequestParam("AssignmentName") String AssignmentName,@RequestParam("AssignmentDueDate") Date DueDate,@RequestParam("CourseId") int courseId) {
 		//Create new assignment object
 		Assignment assignment = new Assignment();
 
 		//Set information, name and due date, then save record
 		assignment.setName(AssignmentName);
 		assignment.setDueDate(DueDate);
+		
+		
+		
+		assignment.setCourse(courseRepository.findById(courseId).get());
+		
 		assignmentRepository.save(assignment);
-		return assignment; 
+		
+		//copying info into assignmnetDTO
+		AssignmentDTO dto = new AssignmentDTO();
+		dto.assignmentId = assignment.getId();
+		dto.assignmentName = assignment.getName();
+		String pattern = "MM/dd/yyyy";
+		DateFormat df = new SimpleDateFormat(pattern);
+		dto.dueDate = df.format(assignment.getDueDate());
+		dto.courseTitle = assignment.getCourse().getTitle();
+		dto.courseId = assignment.getCourse().getCourse_id();
+		
+		return dto;
 		
 	}
 	
