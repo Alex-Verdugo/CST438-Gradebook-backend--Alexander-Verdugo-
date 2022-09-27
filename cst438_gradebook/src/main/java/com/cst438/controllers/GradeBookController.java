@@ -1,5 +1,6 @@
 package com.cst438.controllers;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,11 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -169,5 +172,89 @@ public class GradeBookController {
 		
 		return assignment;
 	}
+	
+//	//Creating new Assignment
+//	@PostMapping("/assignment/createAssignment")
+//	@Transactional 
+//	private  Assignment createAssignment(@RequestParam("AssignmentName") String AssignmentName,@RequestParam("AssignmentDueDate") Date DueDate ) {
+//		
+//		
+//		Assignment assignment = new Assignment();
+//		
+//		assignment.setDueDate(DueDate);
+//		assignment.setName(AssignmentName);
+//		assignmentRepository.save(assignment);
+//		
+//		return assignment; 
+//		
+//	}
+	
+
+	// Change the name of an assignment for a course
+	@PutMapping("/assignment/{assignmentId}")
+	@Transactional
+	public Assignment changeAssignmentName(@PathVariable int assignmentId, @RequestParam String AssignmentName) {
+		
+		String email = "dwisneski@csumb.edu";
+		
+		//Getting assignment by ID
+		Assignment assignment = checkAssignment(assignmentId,email);
+		
+		if(assignment == null) {
+			throw new ResponseStatusException( HttpStatus.UNAUTHORIZED, "Not Authorized. " );
+		}
+		else {
+		//Change assignment name 
+		assignment.setName(AssignmentName);
+		assignmentRepository.save(assignment);
+		return assignment;
+		}
+	}
+	
+	//Delete an assignment for a course  checks if assignment has a grade
+	@DeleteMapping("/assignment/{assignmentId}")
+	@Transactional
+	public void deleteAssignment(@PathVariable int assignmentId) {
+		
+		String email = "dwisneski@csumb.edu";
+		
+		//Find assignment by ID
+		Assignment assignment = checkAssignment(assignmentId,email);
+		
+		if(assignment.getNeedsGrading() == 0) {
+			assignmentRepository.delete(assignment);
+		} else {
+			throw  new ResponseStatusException( HttpStatus.BAD_REQUEST, "Error, assignments with existing grades");
+		}
+		
+	}
+	
+	
+	// Add a new assignment for the course. The assignment has a name and a due date.
+	@PostMapping("/assignment")
+	@Transactional
+	private  Assignment createAssignment(@RequestParam("AssignmentName") String AssignmentName,@RequestParam("AssignmentDueDate") Date DueDate ) {
+ 
+		
+		String email = "dwisneski@csumb.edu"; //email
+		
+		if(email == "dwisneski@csumb.edu") {
+		
+		//Create new assignment object
+		Assignment assignment = new Assignment();
+
+		//Set information, name and due date, then save record
+		assignment.setName(AssignmentName);
+		assignment.setDueDate(DueDate);
+		assignmentRepository.save(assignment);
+		return assignment; 
+		}
+		else {
+			throw new ResponseStatusException( HttpStatus.UNAUTHORIZED, "Not Authorized. " );
+		}
+	}
+	
+	
+	
 
 }
