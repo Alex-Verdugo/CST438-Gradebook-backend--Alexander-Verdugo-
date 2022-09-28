@@ -251,7 +251,7 @@ public class JunitTestGradebook {
 	
 	@Test
 	public void createAssignmentTest() throws Exception {
-		
+		MockHttpServletResponse response;
 
 		// mock database data
 
@@ -277,7 +277,60 @@ public class JunitTestGradebook {
 		
 		// end of mock data
 		
+		response = mvc.perform(MockMvcRequestBuilders
+				.post("/assignment/createAssignment?AssignmentName=Test Assignment&AssignmentDueDate=2022-10-10&CourseId="+TEST_COURSE_ID).accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 		
+		// verify that return status = OK (value 200)
+		assertEquals(200, response.getStatus());
+		
+		
+	}
+	
+
+	
+	@Test
+	public void deleteAssignmentTest() throws Exception {
+		MockHttpServletResponse response;
+
+		// mock database data
+
+		Course course = new Course();
+		course.setCourse_id(TEST_COURSE_ID);
+		course.setSemester(TEST_SEMESTER);
+		course.setYear(TEST_YEAR);
+		course.setInstructor(TEST_INSTRUCTOR_EMAIL);
+		course.setEnrollments(new java.util.ArrayList<Enrollment>());
+		course.setAssignments(new java.util.ArrayList<Assignment>());
+		
+		given(courseRepository.findById(TEST_COURSE_ID)).willReturn(Optional.of(course));
+		
+		Assignment assignment = new Assignment();
+		assignment.setCourse(course);
+		course.getAssignments().add(assignment);
+		assignment.setDueDate(new java.sql.Date(System.currentTimeMillis()));
+		assignment.setId(1);
+		assignment.setName("Assignment 1");
+		assignment.setNeedsGrading(1);
+
+		given(assignmentRepository.findById(1)).willReturn(Optional.of(assignment));
+		
+		// end of mock data
+		
+		response = mvc.perform(MockMvcRequestBuilders
+				.delete("/assignment/delete?AssignmentId=1").accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+		
+		// verify that return status = BAD_REQUEST (value 400)
+		assertEquals(400, response.getStatus());
+		
+		
+		// update assignment to have "0 grades"
+		assignment.setNeedsGrading(0);
+		
+		response = mvc.perform(MockMvcRequestBuilders
+				.delete("/assignment/delete?AssignmentId=1").accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+		
+		// verify that return status = OK (value 200)
+				assertEquals(200, response.getStatus());
 		
 	}
 	
