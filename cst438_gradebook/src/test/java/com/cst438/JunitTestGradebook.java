@@ -252,6 +252,9 @@ public class JunitTestGradebook {
 	@Test
 	public void createAssignmentTest() throws Exception {
 		
+
+		// mock database data
+
 		Course course = new Course();
 		course.setCourse_id(TEST_COURSE_ID);
 		course.setSemester(TEST_SEMESTER);
@@ -260,14 +263,19 @@ public class JunitTestGradebook {
 		course.setEnrollments(new java.util.ArrayList<Enrollment>());
 		course.setAssignments(new java.util.ArrayList<Assignment>());
 		
+		given(courseRepository.findById(TEST_COURSE_ID)).willReturn(Optional.of(course));
+		
 		Assignment assignment = new Assignment();
 		assignment.setCourse(course);
 		course.getAssignments().add(assignment);
-		// set dueDate to 1 week before now.
-		assignment.setDueDate(new java.sql.Date(System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000));
+		assignment.setDueDate(new java.sql.Date(System.currentTimeMillis()));
 		assignment.setId(1);
 		assignment.setName("Assignment 1");
 		assignment.setNeedsGrading(1);
+
+		given(assignmentRepository.findById(1)).willReturn(Optional.of(assignment));
+		
+		// end of mock data
 		
 		
 		
@@ -294,8 +302,7 @@ public class JunitTestGradebook {
 		Assignment assignment = new Assignment();
 		assignment.setCourse(course);
 		course.getAssignments().add(assignment);
-		// set dueDate to 1 week before now.
-		assignment.setDueDate(new java.sql.Date(System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000));
+		assignment.setDueDate(new java.sql.Date(System.currentTimeMillis()));
 		assignment.setId(1);
 		assignment.setName("Assignment 1");
 		assignment.setNeedsGrading(1);
