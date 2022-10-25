@@ -105,6 +105,9 @@ public class GradeBookController {
 		
 		Course c = courseRepository.findById(course_id).orElse(null);
 		if (!c.getInstructor().equals(email)) {
+            System.out.println("afsdfjsadkjfhasdkjfh");
+            System.out.println(c.getInstructor());
+            System.out.println(email);
 			throw new ResponseStatusException( HttpStatus.UNAUTHORIZED, "Not Authorized. " );
 		}
 		
