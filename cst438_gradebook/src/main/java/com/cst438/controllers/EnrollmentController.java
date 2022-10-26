@@ -31,8 +31,10 @@ public class EnrollmentController {
 	@Transactional
 	public EnrollmentDTO addEnrollment(@RequestBody EnrollmentDTO enrollmentDTO) {
 		
+
 		//TODO  complete this method in homework 4
         Enrollment e = new Enrollment();
+
         e.setStudentEmail(enrollmentDTO.studentEmail);
         e.setStudentName(enrollmentDTO.studentName);
         Course c = courseRepository.findById(enrollmentDTO.course_id).orElse(null);
@@ -43,6 +45,7 @@ public class EnrollmentController {
         e = enrollmentRepository.save(e);
         enrollmentDTO.id = e.getId();
         return enrollmentDTO;
+
 	}
 
 }
