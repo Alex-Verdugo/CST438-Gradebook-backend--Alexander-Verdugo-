@@ -254,6 +254,7 @@ public class GradeBookController {
 		//Set information, name and due date, then save record
 		assignment.setName(AssignmentName);
 		assignment.setDueDate(DueDate);
+		assignment.setNeedsGrading(1);
 		
 		//getting course by course ID from course repo
 		assignment.setCourse(courseRepository.findById(courseId).get());
