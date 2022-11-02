@@ -64,7 +64,7 @@ public class RegistrationServiceMQ extends RegistrationService {
 	public void sendFinalGrades(int course_id, CourseDTOG courseDTO) {
 		 
 		  System.out.println("Sending final grades "+course_id+" "+courseDTO);
-		  rabbitTemplate.convertAndSend(courseDTO);
+          rabbitTemplate.convertAndSend(registrationQueue.getName(),courseDTO);
 	        System.out.println("After sending final grades");
 		
 	}
